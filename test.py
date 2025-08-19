@@ -23,6 +23,8 @@ df = df[[c for c in columns_to_keep if c in df.columns]]
 if "date_time" in df.columns:
     df["date_time"] = pd.to_datetime(df["date_time"], errors="coerce")
 
+db.delete_labnetwork_table()
+
 db.create_labnetwork_table()
 
 db.insert_data_to_db(df)

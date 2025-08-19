@@ -170,6 +170,36 @@ def check_labnetwork_table_exists():
     return exists
 
 
+def delete_labnetwork_table():
+    """Deletes the labnetwork table and its associated index from the database.
+
+    WARNING: This will permanently delete all data in the labnetwork table.
+    Use with caution!
+    """
+    with psycopg2.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            # Drop the index first (if it exists)
+            cur.execute("DROP INDEX IF EXISTS labnetwork_embed_idx")
+
+            # Drop the table
+            cur.execute("DROP TABLE IF EXISTS labnetwork")
+
+            conn.commit()
+    print("labnetwork table and index deleted successfully.")
+
+
+def truncate_labnetwork_table():
+    """Truncates the labnetwork table, removing all data but keeping the table structure.
+
+    This is faster than DELETE for removing all rows and resets the auto-increment counter.
+    """
+    with psycopg2.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute("TRUNCATE TABLE labnetwork RESTART IDENTITY")
+            conn.commit()
+    print("labnetwork table truncated successfully.")
+
+
 ###############################################################################
 # Index the vectors in the labnetwork database
 # This may not be the best method, or lead to the fastest searching
